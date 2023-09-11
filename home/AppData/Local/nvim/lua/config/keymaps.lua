@@ -6,15 +6,7 @@
 --  term_mode         = "t"
 --  command_mode      = "c"
 
-local keymap = function(mode, keys, func, opts)
-    local options = { noremap = true, silent = true }
-
-    if opts then
-        options = vim.tbl_extend("force", options, opts)
-    end
-
-    vim.keymap.set(mode, keys, func, options)
-end
+local keymap = require("lua.config.utils").keymap
 
 -----------------
 -- Normal Mode --
@@ -24,7 +16,8 @@ end
 keymap("n", "<leader>sh", ":split<CR>", { desc = "Split horizontal" })
 keymap("n", "<leader>sv", ":vsplit<CR>", { desc = "Split vertical" })
 
--- Close splits
+-- Manage splits
+keymap("n", "<leader>=", "<C-w>=", { desc = "Make alll splits equal size" })
 keymap("n", "<leader>c", "<C-w>q", { desc = "Close split" })
 keymap("n", "<leader>co", ":only<CR>", { desc = "Close all other splits" })
 
@@ -33,6 +26,13 @@ keymap("n", "<C-h>", "<C-w>h")
 keymap("n", "<C-j>", "<C-w>j")
 keymap("n", "<C-k>", "<C-w>k")
 keymap("n", "<C-l>", "<C-w>l")
+
+-- Tabs
+keymap("n", "<leader>to", ":tabnew<CR>", { desc = "Open new tab" })
+keymap("n", "<leader>tx", ":tabclose<CR>", { desc = "Close current tab" })
+keymap("n", "<leader>tn", ":tabn<CR>", { desc = "Go to next tab" })
+keymap("n", "<leader>tp", ":tabp<CR>", { desc = "Go to previous tab" })
+keymap("n", "<leader>tf", ":tabnew %<CR>", { desc = "Open current buffer in new tab" })
 
 -- Move text up and down
 keymap("n", "<A-j>", "<Esc>:m .+1<CR>", { desc = "Move line down one line" })
