@@ -18,13 +18,21 @@ return {
                     local path_to_lombok = jdtls_dir .. "/lombok.jar"
                     local path_to_jar = vim.fn.glob(jdtls_dir .. "/plugins/org.eclipse.equinox.launcher_*.jar")
                     local config_dir = jdtls_dir .. "/config_win"
+                    local path_to_java_debug = vim.fn.stdpath("data") .. "/mason/packages/java-debug-adapter/extension/server"
+                    local path_to_java_test = vim.fn.stdpath("data") .. "/mason/packages/java-test/extension/server"
+
+                    local bundles = {
+                        vim.fn.glob(path_to_java_debug .. "/com.microsoft.java.debug.plugin-*.jar", true),
+                    }
+                    vim.list_extend(bundles, vim.split(vim.fn.glob(path_to_java_test .. "/*.jar", true), "\n"))
 
                     local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
                     local workspace_dir = vim.fn.stdpath("data") .. "/site/java/workspace-root/" .. project_name
+                    print("Workspace dir: " .. workspace_dir)
                     os.execute("mkdir " .. workspace_dir)
 
                     local cmd = {
-                        "C:/EngTools/Java/jdk-20/bin/java",
+                        "C:/TrustedApps/Java/jdk-20/bin/java",
                         "-Declipse.application=org.eclipse.jdt.ls.core.id1",
                         "-Dosgi.bundles.defaultStartLevel=4",
                         "-Declipse.product=org.eclipse.jdt.ls.core.product",
@@ -49,8 +57,12 @@ return {
                             runtimes = {
                                 {
                                     name = "JavaSE-1.8",
-                                    path = "C:/EngTools/Java/OpenJdk-8",
+                                    path = "C:/TrustedApps/Java/OpenJdk-8",
                                 },
+                                -- {
+                                --     name = "JavaSE-20",
+                                --     path = "C:/TrustedApps/Java/jdk-20",
+                                -- },
                             },
                             updateBuildConfiguration = "interactive",
                         },
@@ -61,11 +73,10 @@ return {
                             enabled = true,
                             settings = {
                                 profile = "GoogleStyle",
-                                url = "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
-                                -- vim.fn.stdpath("config") .. "/lang-servers/intellij-java-google-style.xml",
+                                url = "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
                             },
                         },
-                        home = "C:/EngTools/Java/jdk1.8.0_152",
+                        home = "C:/TrustedApps/Java/OpenJdk-8",
                         implementationsCodeLens = {
                             enabled = true,
                         },
@@ -97,9 +108,12 @@ return {
                             importOrder = {
                                 "java",
                                 "javax",
-                                "com",
                                 "org",
+                                "com",
                             },
+                        },
+                        contentProvider = {
+                              preferred = "fernflower",
                         },
                         java = java,
                         signatureHelp = {
@@ -134,31 +148,49 @@ return {
                     keymap("n", "<leader>ev", ":lua require('jdtls').extract_variable()<CR>", { desc = "JDTLS: Extract Variable" })
                     keymap("n", "<leader>oi", ":lua require('jdtls').organize_imports()<CR>", { desc = "JDTLS: Organize Imports" })
 
-                    -- Need nvim-dap for the following two shortcuts
                     keymap("n", "<leader>tc", ":lua require('jdtls').test_class()<CR>", { desc = "JDTLS: Test Class" })
                     keymap("n", "<leader>tm", ":lua require('jdtls').test_nearest_method()<CR>", { desc = "JDTLS: Test Nearest Method" })
+
+                    -- DAP setup
+                    function Attach_To_Karaf()
+                        local dap = require("dap")
+
+                        dap.configurations.java = {
+                            {
+                                type = "java",
+                                request = "attach",
+                                name = "Attach To Karaf",
+                                hostName = "localhost",
+                                port = "5005",
+                            },
+                        }
+
+                        dap.continue()
+                    end
+
+                    keymap("n", "<leader>ad", ":lua Attach_To_Karaf()<CR>")
 
                     jdtls.start_or_attach({
                         capabilities = capabilities,
                         cmd = cmd,
-                        extendedClientCapabilities = extendedClientCapabilities,
                         flags = {
                             allow_incremental_sync = true,
                         },
                         init_options = {
-                            bundles = {},
+                            bundles = bundles,
+                            extendedClientCapabilities = extendedClientCapabilities,
                         },
-                        -- on_attach = function ()
-                        --     jdtls.setup.add_commands()
-                        -- end,
-                        root_dir = jdtls.setup.find_root({ "build.gradle", "pom.xml" }),
+                        on_attach = function(client, bufnr)
+                            jdtls.setup_dap({ hotcodereplace = "auto" })
+                        end,
+                        root_dir = jdtls.setup.find_root({ ".git", "build.gradle", "gradlew", "mvnw", "pom.xml" }),
                         settings = settings,
                     })
                 end,
                 group = group,
                 pattern = "java",
             })
-        end
+        end,
     },
 }
 

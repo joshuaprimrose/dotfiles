@@ -16,7 +16,13 @@ return {
                     mappings = {
                         i = { ["<c-t>"] = trouble.open_with_trouble },
                         n = { ["<c-t>"] = trouble.open_with_trouble },
-                    }
+                    },
+                    path_display = function (opts, path)
+                        local file_name = require("telescope.utils").path_tail(path)
+
+                        return string.format("%s … %s", file_name, path)
+                    end,
+
                 },
                 extensions = {
                     file_browser = {

@@ -39,10 +39,10 @@ keymap("n", "<A-j>", "<Esc>:m .+1<CR>", { desc = "Move line down one line" })
 keymap("n", "<A-k>", "<Esc>:m .-2<CR>", { desc = "Move line up one line" })
 
 -- Resize windows
-keymap("n", "<C-Up>",    ":resize -2<CR>", { desc = "Resize window up" })
-keymap("n", "<C-Down>",  ":resize +2<CR>", { desc = "Resize window down" })
-keymap("n", "<C-Left>",  ":vertical resize +2<CR>", { desc = "Resize window left" })
-keymap("n", "<C-Right>", ":vertical resize -2<CR>", { desc = "Resize window right" })
+keymap("n", "<C-Up>",    ":resize +2<CR>", { desc = "Resize window up" })
+keymap("n", "<C-Down>",  ":resize -2<CR>", { desc = "Resize window down" })
+keymap("n", "<C-Left>",  ":vertical resize -2<CR>", { desc = "Resize window left" })
+keymap("n", "<C-Right>", ":vertical resize +2<CR>", { desc = "Resize window right" })
 
 -------------------
 -- Terminal Mode --

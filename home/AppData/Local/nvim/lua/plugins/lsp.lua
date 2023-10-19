@@ -14,6 +14,7 @@ return {
             local lsp_servers = {
                 gopls = {},
                 jsonls = {},
+                lemminx = {},
                 lua_ls = {
                     settings = {
                         Lua = {

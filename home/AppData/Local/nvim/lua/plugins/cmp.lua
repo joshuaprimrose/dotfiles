@@ -17,7 +17,7 @@ return {
                     format = lspkind.cmp_format({
                         ellipsis_char = "…",  -- Use this to truncate when maxwidth is reached
                         maxwidth = 75,        -- Limit the number of characters that can appear in cmp popup
-                        mode = "symbol_text",      -- Show only symbol_text annotations
+                        mode = "symbol_text", -- Show only symbol_text annotations
                         -- The function below will be called before any lspkind modifications occur
                         before = function (entry, vim_item)
                             return vim_item
@@ -25,13 +25,50 @@ return {
                     })
                 },
                 mapping = {
-                    ["<Up>"] = cmp.mapping(cmp.mapping.select_prev_item(), { "i", "c" }),
-                    ["<Down>"] = cmp.mapping(cmp.mapping.select_next_item(), { "i", "c" }),
-                    ["<CR>"] = cmp.mapping.confirm({
-                        behavior = cmp.ConfirmBehavior.Insert,
-                        select = true,
-                    }),
                     ["<C-e"] = cmp.mapping.close(),
+                    ["<CR>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true }),
+                    ["<C-j>"] = cmp.mapping(function (fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item()
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
+                    ["<Down>"] = cmp.mapping(function (fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item()
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
+                    ["<PgDown>"] = cmp.mapping(function (fallback)
+                        if cmp.visible() then
+                            cmp.scroll_docs(-4)
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
+                    ["<C-k>"] = cmp.mapping(function (fallback)
+                        if cmp.visible() then
+                            cmp.select_prev_item()
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
+                    ["<Up>"] = cmp.mapping(function (fallback)
+                        if cmp.visible() then
+                            cmp.select_prev_item()
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
+                    ["<PgUp>"] = cmp.mapping(function (fallback)
+                        if cmp.visible() then
+                            cmp.scroll_docs(4)
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
                 },
                 sources = {
                     {
@@ -67,6 +104,15 @@ return {
                         luasnip.lsp_expand(args.body)
                     end,
                 },
+                window = {
+                    documentation = cmp.config.window.bordered(),
+                }
+            })
+
+            cmp.setup.filetype({ "dap-repl", "dapui_watches", "dapui_hover" }, {
+                sources = {
+                    { name = "dap" },
+                },
             })
         end,
         dependencies = {
@@ -80,6 +126,7 @@ return {
             "onsails/lspkind.nvim",
             "rafamadriz/friendly-snippets",
             "saadparwaiz1/cmp_luasnip",
+            "nvim-tree/nvim-web-devicons",
         },
         event = "InsertEnter",  -- Load the plugin when we enter insert mode
     }

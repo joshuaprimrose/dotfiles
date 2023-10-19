@@ -7,7 +7,7 @@ return {
                 },
                 server = {
                     cmd = {
-                        "C:/EngTools/Java/jdk-20/bin/java",
+                        "C:/TrustedApps/Java/jdk-20/bin/java",
                         "-jar",
                         vim.fn.stdpath("data") .. "/mason/packages/sonarlint-language-server/extension/server/sonarlint-ls.jar",
                         "-stdio",
