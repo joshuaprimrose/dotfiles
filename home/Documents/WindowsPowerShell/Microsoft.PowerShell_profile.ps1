@@ -1,13 +1,27 @@
-Remove-Item alias:curl
-Set-Alias wcurl Invoke-WebRequest
+# Remove-Item alias:curl
+# Set-Alias wcurl Invoke-WebRequest
 
+#PoshGit
 Import-Module posh-git
-Import-Module -Name Terminal-Icons
-Import-Module -Name z
-Import-Module -Name PSReadLine
 
+#Terminal Icons
+Import-Module -Name Terminal-Icons
+
+#Z
+Import-Module -Name z
+
+#PSReadLine
+Import-Module PSReadLine
+Set-PSReadLineOption -PredictionSource HistoryAndPlugin 
+Set-PSReadLineOption -PredictionViewStyle ListView
+Set-PSReadLineOption -EditMode Windows
+
+#PowerType
+Enable-PowerType
+
+#PsFzf
 Import-Module PSFzf
-Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r'
+Set-PsFzfOption -PSReadLineChordProvider "Ctrl+f" -PSReadLineChordReverseHistory "Ctrl+r"
 
 function which ($command) { 
     Get-Command -Name $command -ErrorAction SilentlyContinue | 

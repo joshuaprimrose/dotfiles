@@ -25,6 +25,13 @@ return {
 
                 },
                 extensions = {
+                    aerial = {
+                        show_nesting = {
+                            ["_"] = false,
+                            json = true,
+                            yaml = true,
+                        }
+                    },
                     file_browser = {
                         hijack_netrw = true,
                         mappings = {
@@ -42,9 +49,10 @@ return {
                         mappings = {
                             i = {
                                 ["<C-k>"] = lga_actions.quote_prompt(),
-                                ["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
+                                ["<C-g>"] = lga_actions.quote_prompt({ postfix = " --glob "}),
+                                ["<C-t>"] = lga_actions.quote_prompt({ postfix = " -t " }),
                             }
-                        }
+                        },
                     }
                 },
             })
@@ -54,10 +62,12 @@ return {
             telescope.load_extension("fzf")
             telescope.load_extension("lazygit")
             telescope.load_extension("live_grep_args")
+            telescope.load_extension("aerial")
 
             local keymap = require("lua.config.utils").keymap
 
             keymap("n", "<leader>ex", ":Telescope file_browser path=%:p:h select_buffer=true<CR>", { desc = "Telescope: File Browser" })
+            keymap("n", "<leader>fa", ":Telescope aerial<CR>", { desc = "Telescope: Find Aerial" })
             keymap("n", "<leader>fb", ":lua require('telescope').extensions.dap.list_breakpoints()<CR>", { desc = "Telescope: Find Breakpoints" })
             keymap("n", "<leader>ff", ":Telescope find_files<CR>", { desc = "Telescope: Find Files" })
             keymap("n", "<leader>fg", ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>", { desc = "Telescope: Live Grep" })
@@ -72,6 +82,7 @@ return {
             "nvim-telescope/telescope-dap.nvim",
             "nvim-telescope/telescope-live-grep-args.nvim",
             "nvim-tree/nvim-web-devicons",
+            "stevearc/aerial.nvim",
             {
                 "nvim-telescope/telescope-fzf-native.nvim",
                 build = "make"

@@ -4,7 +4,7 @@ return {
         config = function ()
             local keymap = require("lua.config.utils").keymap
 
-            keymap("n", "<leader>sp", ":Spectre<CR>", { desc = "Open Spectre" })
+            keymap("n", "<leader>sp", ":lua require('spectre').toggle()<CR>", { desc = "Toggle Spectre" })
         end,
         dependencies = {
             "nvim-lua/plenary.nvim",

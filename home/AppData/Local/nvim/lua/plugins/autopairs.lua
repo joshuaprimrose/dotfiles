@@ -4,7 +4,15 @@ return {
         local autopairs = require("nvim-autopairs")
 
         autopairs.setup({
+            check_comma = true,
             check_ts = true,  -- Enable treesitter
+            disable_filetype = {
+                "TelescopePrompt",
+                "spectre_panel",
+            },
+            fast_wrap = {
+                map = "<M-w>",
+            },
             ts_config = {
                 java = false,                        -- Don't check treesitter in Java
                 javascript = { "template_string" },  -- Don't add pairs in Javascript template_string treesitter nodes

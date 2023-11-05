@@ -18,6 +18,9 @@ return {
                         "diff",
                         "diagnostics",
                     },
+                    lualine_c = {
+                        "aerial",
+                    }
                 },
             })
         end,

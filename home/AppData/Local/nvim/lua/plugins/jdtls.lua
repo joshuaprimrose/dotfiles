@@ -32,7 +32,7 @@ return {
                     os.execute("mkdir " .. workspace_dir)
 
                     local cmd = {
-                        "C:/TrustedApps/Java/jdk-20/bin/java",
+                        "C:/EngTools/Java/jdk-20/bin/java",
                         "-Declipse.application=org.eclipse.jdt.ls.core.id1",
                         "-Dosgi.bundles.defaultStartLevel=4",
                         "-Declipse.product=org.eclipse.jdt.ls.core.product",
@@ -57,12 +57,8 @@ return {
                             runtimes = {
                                 {
                                     name = "JavaSE-1.8",
-                                    path = "C:/TrustedApps/Java/OpenJdk-8",
+                                    path = "C:/EngTools/Java/OpenJdk-8",
                                 },
-                                -- {
-                                --     name = "JavaSE-20",
-                                --     path = "C:/TrustedApps/Java/jdk-20",
-                                -- },
                             },
                             updateBuildConfiguration = "interactive",
                         },
@@ -76,7 +72,7 @@ return {
                                 url = "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
                             },
                         },
-                        home = "C:/TrustedApps/Java/OpenJdk-8",
+                        home = "C:/EngTools/Java/OpenJdk-8",
                         implementationsCodeLens = {
                             enabled = true,
                         },
@@ -168,7 +164,8 @@ return {
                         dap.continue()
                     end
 
-                    keymap("n", "<leader>ad", ":lua Attach_To_Karaf()<CR>")
+                    keymap("n", "<leader>ad", ":lua Attach_To_Karaf()<CR>", { desc = "DAP: Attach to karaf" })
+                    keymap("n", "<leader>sd", ":lua require('dap').disconnect()<CR>", { desc = "DAP: Stop debugging" })
 
                     jdtls.start_or_attach({
                         capabilities = capabilities,
@@ -183,7 +180,7 @@ return {
                         on_attach = function(client, bufnr)
                             jdtls.setup_dap({ hotcodereplace = "auto" })
                         end,
-                        root_dir = jdtls.setup.find_root({ ".git", "build.gradle", "gradlew", "mvnw", "pom.xml" }),
+                        root_dir = vim.loop.fs_realpath(jdtls.setup.find_root({ ".git", "build.gradle", "gradlew", "mvnw", "pom.xml" })),
                         settings = settings,
                     })
                 end,
