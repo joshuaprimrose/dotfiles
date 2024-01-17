@@ -17,14 +17,22 @@ return {
                     layout_strategy = "vertical",
                     mappings = {
                         i = {
-                            -- Use C-j and C-k to scroll previewer
+                            -- Use M-h, M-j and M-k to scroll previewer
                             ["<C-d>"] = false,
                             ["<C-u>"] = false,
-                            ["<C-j>"] = function (prompt_bufnr)
+                            ["<M-j>"] = function (prompt_bufnr)
                                 action_set.scroll_previewer(prompt_bufnr, 1)
                             end,
-                            ["<C-k>"] = function (prompt_bufnr)
+                            ["<M-k>"] = function (prompt_bufnr)
                                 action_set.scroll_previewer(prompt_bufnr, -1)
+                            end,
+
+                            -- Use C-j and C-k to move cursor
+                            ["<C-j>"] = function (prompt_bufnr)
+                                action_set.shift_selection(prompt_bufnr, 1)
+                            end,
+                            ["<C-k>"] = function (prompt_bufnr)
+                                action_set.shift_selection(prompt_bufnr, -1)
                             end,
 
                             -- Toggle preview
@@ -34,19 +42,55 @@ return {
                             ['<C-g>'] = function(prompt_bufnr)
                                 -- Use nvim-window-picker to choose the window by dynamically attaching a function
                                 local picker = action_state.get_current_picker(prompt_bufnr)
-                                picker.get_selection_window = function(p)
-                                    local picked_window_id = require('window-picker').pick_window() or vim.api.nvim_get_current_win()
+                                picker.get_selection_window = function(pkr)
+                                    local picked_window_id = require("window-picker").pick_window() or vim.api.nvim_get_current_win()
 
                                     -- Unbind after using so next instance of the picker acts normally
-                                    p.get_selection_window = nil
+                                    pkr.get_selection_window = nil
                                     return picked_window_id
                                 end
 
-                                return action_set.edit(prompt_bufnr, 'edit')
+                                return action_set.edit(prompt_bufnr, "edit")
                             end,
                         },
                         n = {
+                            -- Use M-j and M-k to scroll previewer
+                            ["<C-d>"] = false,
+                            ["<C-u>"] = false,
+                            ["<M-j>"] = function (prompt_bufnr)
+                                action_set.scroll_previewer(prompt_bufnr, 1)
+                            end,
+                            ["<M-k>"] = function (prompt_bufnr)
+                                action_set.scroll_previewer(prompt_bufnr, -1)
+                            end,
+
+                            -- Use C-j and C-k to move cursor
+                            ["j"] = false,
+                            ["k"] = false,
+                            ["<C-j>"] = function (prompt_bufnr)
+                                action_set.shift_selection(prompt_bufnr, 1)
+                            end,
+                            ["<C-k>"] = function (prompt_bufnr)
+                                action_set.shift_selection(prompt_bufnr, -1)
+                            end,
+
+                            -- Toggle preview
                             ["<M-p>"] = action_layout.toggle_preview,
+
+                            -- The following function allows you to choose what window a file is opened in
+                            ['<C-g>'] = function(prompt_bufnr)
+                                -- Use nvim-window-picker to choose the window by dynamically attaching a function
+                                local picker = action_state.get_current_picker(prompt_bufnr)
+                                picker.get_selection_window = function(pkr)
+                                    local picked_window_id = require("window-picker").pick_window() or vim.api.nvim_get_current_win()
+
+                                    -- Unbind after using so next instance of the picker acts normally
+                                    pkr.get_selection_window = nil
+                                    return picked_window_id
+                                end
+
+                                return action_set.edit(prompt_bufnr, "edit")
+                            end,
                         },
                     },
                     path_display = function (_, path)
@@ -71,7 +115,8 @@ return {
                             ["_"] = false,
                             json = true,
                             yaml = true,
-                        }
+                        },
+                        sorting_strategy = "ascending",
                     },
                     file_browser = {
                         hijack_netrw = true,
@@ -79,9 +124,14 @@ return {
                             i = {
                                 ["<S-d>"] = file_browser_actions.sort_by_date,
                                 ["<S-s>"] = file_browser_actions.sort_by_size,
+                                ["<C-s>"] = function (prompt_bufnr)
+                                    action_set.shift_selection(prompt_bufnr, 0)
+                                    print("selected")
+                                end,
                             },
                             n = {
-
+                                ["<S-d>"] = file_browser_actions.sort_by_date,
+                                ["<S-s>"] = file_browser_actions.sort_by_size,
                             },
                         },
                     },
@@ -95,6 +145,11 @@ return {
                         auto_quoting = true,
                         mappings = {
                             i = {
+                                ["<C-q>"] = lga_actions.quote_prompt(),
+                                ["<C-g>"] = lga_actions.quote_prompt({ postfix = " --glob "}),
+                                ["<C-t>"] = lga_actions.quote_prompt({ postfix = " -t " }),
+                            },
+                            n = {
                                 ["<C-q>"] = lga_actions.quote_prompt(),
                                 ["<C-g>"] = lga_actions.quote_prompt({ postfix = " --glob "}),
                                 ["<C-t>"] = lga_actions.quote_prompt({ postfix = " -t " }),

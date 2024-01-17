@@ -26,7 +26,7 @@ return {
             ]]
 
             hydra({
-                body = "<leader>g",
+                body = "<leader>v",
                 config = {
                     color = "teal",
                     hint = {

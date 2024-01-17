@@ -19,7 +19,9 @@ return {
                 automatic_installation = true,
                 ensure_installed = {
                     "jdtls",
-                    "lua_ls"
+                    "gopls",
+                    "lua_ls",
+                    "templ",
                 },
                 handlers = nil
             })
@@ -40,14 +42,14 @@ return {
 
                 -- See `:help K` for why this keymap
                 keymap("n", "K", vim.lsp.buf.hover, { buffer = bufnr, desc = "LSP: Hover Documentation" })
-                keymap("n", "<leader>K", vim.lsp.buf.signature_help, { buffer = bufnr, desc = "LSP: Signature Documentation" })
+                keymap("n", "<C-k>", vim.lsp.buf.signature_help, { buffer = bufnr, desc = "LSP: Signature Documentation" })
 
                 keymap("n", "<leader>rn", vim.lsp.buf.rename, { buffer = bufnr, desc = "LSP: Rename" })
                 keymap("n", "<leader>ca", vim.lsp.buf.code_action, { buffer = bufnr, "LSP: Code Action" })
 
                 keymap("<leader>gr", require('telescope.builtin').lsp_references, "Goto References")
-                keymap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-                keymap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+                keymap("<leader>ds", require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+                keymap("<leader>ws", require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
                 -- Lesser used LSP functionality
                 keymap("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, { buffer = bufnr, desc = "[W]orkspace [A]dd Folder" })
@@ -91,8 +93,61 @@ return {
                 },
             })
 
+            lspconfig.gopls.setup({
+                capabilities = capabilities,
+                flags = {
+                    allow_incremental_sync = true,
+                    debounce_text_changes = 500
+                },
+                on_attach = on_attach,
+                settings = {
+                    gopls = {
+                        analyses = {
+                            fieldalignment = false,
+                            fillreturns = true,
+                            nilness = true,
+                            nonewvars = true,
+                            shadow = true,
+                            ST1003 = true,
+                            undeclaredname = true,
+                            unreachable = true,
+                            unusedparams = true,
+                            unusedwrite = true,
+                            useany = true,
+                        },
+                        codelenses = {
+                            generate = true, -- show the `go generate` lens.
+                            gc_details = true, -- Show a code lens toggling the display of gc's choices.
+                            test = true,
+                            regenerate_cgo = true,
+                            tidy = true,
+                            upgrade_dependency = true,
+                            vendor = true,
+                        },
+                        hints = {
+                            assignVariableTypes = true,
+                            compositeLiteralFields = true,
+                            compositeLiteralTypes = true,
+                            constantValues = true,
+                            functionTypeParameters = true,
+                            parameterNames = true,
+                            rangeVariableTypes = true,
+                        },
+                        usePlaceholders = true,
+                        completeUnimported = true,
+                        staticcheck = true,
+                        matcher = 'Fuzzy',
+                        diagnosticsDelay = '500ms',
+                        symbolMatcher = 'fuzzy',
+                    },
+                },
+            })
 
-
+            vim.filetype.add({ extension = { templ = "templ"} })
+            lspconfig.templ.setup({
+                capabilities = capabilities,
+                on_attach = on_attach,
+            })
         end,
         dependencies = {
             "folke/neodev.nvim",
