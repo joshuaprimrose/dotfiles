@@ -3,12 +3,12 @@ A repo containing any items needed for configuring a usable windows dev environm
 
 # Additional Tools
 - Chocolatey: https://chocolatey.org/
-- Alacritty: https://github.com/alacritty/alacritty
 - Git: https://git-scm.com/
 - Posh Git: https://github.com/dahlbyk/posh-git
 - MinGW: https://www.mingw-w64.org/
 - Various tools (GNU & Others): awk, fd, fzf, ripgrep, sed, etc.
 - Neovim: https://neovim.io/
+- WezTerm: https://wezfurlong.org/wezterm/index.html
 
 # Install
 1. Update any certs (or add http.sslVerify = false to your git config `git config --global http.sslVerify false`)
