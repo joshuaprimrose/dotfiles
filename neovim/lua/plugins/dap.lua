@@ -1,35 +1,56 @@
 return {
-    {
-        "mfussenegger/nvim-dap",
-        config = function ()
-            local dap_ui = require("dapui")
-            local keymap = require("lua.config.utils").keymap
+    "mfussenegger/nvim-dap",
+    config = function ()
+        local dap = require("dap")
 
-            require("neodev").setup({
-                library = {
-                    plugins = {
-                        "nvim-dap-ui"
-                    },
-                    types = true,
+        ---@diagnostic disable-next-line: unused-function, unused-local
+        local function attach_to_karaf()
+            dap.configurations.java = {
+                {
+                    type = "java",
+                    request = "attach",
+                    name = "Attach to Karaf",
+                    hostName = "localhost",
+                    port = "5005",
                 },
-            })
+            }
 
-            dap_ui.setup()
-            keymap("n", "<leader>dt", ":lua require('dapui').toggle()<CR>", { desc = "Debug UI: Toggle Debugger UI" })
+            dap.continue()
+        end
 
-            -- Debugger
-            keymap("n", "<F5>", ":lua require('dap').continue()<CR>", { desc = "Debug: Continue" })
-            keymap("n", "<F6>", ":lua require('dap').step_over()<CR>", { desc = "Debug: Step Over" })
-            keymap("n", "<F7>", ":lua require('dap').step_into()<CR>", { desc = "Debug: Step Into" })
-            keymap("n", "<F8>", ":lua require('dap').step_out()<CR>", { desc = "Debug: Step Out" })
-            keymap("n", "<leader>b", ":lua require('dap').toggle_breakpoint()<CR>", { desc = "Debug: Toggle Breakpoint" })
-            keymap("n", "<leader>B", ":lua require('dap').set_breakpoint(vim.fn.input('Breakpoint Condition: ')<CR>", { desc = "Debug: Toggle Conditional Breakpoint" })
-        end,
-        dependencies = {
-            "folke/neodev.nvim",
-            "rcarriga/cmp-dap",
-            "rcarriga/nvim-dap-ui",
-        }
+        vim.keymap.set("n", "<leader>dj", ":lua attach_to_karaf()<CR>", { desc = "DBG: Java Attach Debugger to Karaf" })
+
+        vim.keymap.set("n", "<leader>bp", ":lua require('dap').toggle_breakpoint()<CR>", { desc = "DBG: Set Breakpoint" })
+        vim.keymap.set("n", "<leader>do", ":lua require('dap').step_over()<CR>", { desc = "DBG: Step Over" })
+        vim.keymap.set("n", "<leader>di", ":lua require('dap').step_into()<CR>", { desc = "DBG: Step Into" })
+        vim.keymap.set("n", "<leader>dc", ":lua require('dap').continue()<CR>", { desc = "DBG: Continue" })
+        vim.keymap.set("n", "<leader>dd", ":lua require('dap').disconnect()<CR>", { desc = "DBG: Disconnect Debugger" })
+    end,
+    dependencies = {
+        {
+            "leoluz/nvim-dap-go",
+            config = function ()
+                require("dap-go").setup({
+                    dap_configurations = {
+                        {
+                            mode = "remote",
+                            name = "Attach Go remote",
+                            request = "attach",
+                            type = "go",
+                        },
+                    },
+                    delve = {
+                        detached = vim.fn.has("win32") == 0,
+                        initialize_timeout_sec = 20,
+                        path = vim.fn.stdpath("data") .. "/mason/packages/delve/dlv",
+                        port = "${port}",
+                    },
+                    tests = {
+                        verbose = true,
+                    }
+                })
+            end,
+        },
     }
 }
 
