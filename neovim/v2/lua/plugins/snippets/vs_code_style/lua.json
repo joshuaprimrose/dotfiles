@@ -1,0 +1,28 @@
+{
+    "Local Function": {
+        "body": [
+            "local ${1:funcName} = function(${2:args})",
+            "   ${3:body}",
+            "end"
+        ],
+        "description": "Create a local function.",
+        "prefix": "locf",
+        "scope": "lua"
+    },
+    "Local Module": {
+        "description": "Require a module as a variable.",
+        "body": [
+            "local ${1:modName} = require(\"${2:module}\")"
+        ],
+        "prefix": "locm",
+        "scope": "lua"
+    },
+    "Local Variable": {
+        "prefix": "locv",
+        "body": [
+            "local ${1:varName} = ${2:value}"
+        ],
+        "description": "Create a variable.",
+        "scope": "lua"
+    }
+}
